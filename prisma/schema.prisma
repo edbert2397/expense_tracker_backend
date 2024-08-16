@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User{
+  id Int @id @default(autoincrement())
+  name String
+  Saldo Int @default(0)
+  email String @unique
+  password String 
+  friends UserFriends[] @relation ("friends")
+  friendsOf UserFriends[] @relation("friendsOf")
+  incomes Income[] 
+  outcomes Outcome[]
+  activities Activities[]
+
+
+}
+
+model UserFriends{
+  friends User @relation("friends", fields: [friendsId],references: [id])
+  friendsId Int
+
+  friendsOf User @relation("friendsOf",fields:[friendsOfId], references:[id])
+  friendsOfId Int
+
+  exchange Int @default(0)
+  @@id(name: "userFriendsId",[friendsId, friendsOfId])
+}
+
+model Income{
+  id Int @id @default(autoincrement())
+  amount Int
+  category String
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId],references:[id],onDelete: Cascade)
+  userId Int 
+
+  senderId Int
+}
+
+model Outcome{
+  id Int @id @default(autoincrement())
+  amount Int
+  category String
+  createdAt DateTime @default(now())
+  user User @relation(fields:[userId],references:[id],onDelete: Cascade)
+  userId Int
+
+  recipientId Int
+}
+model Activities{
+  id Int @id @default(autoincrement())
+  amount Int
+  category String
+  createdAt DateTime @default(now())
+  user User @relation(fields:[userId],references:[id],onDelete: Cascade)
+  userId Int
+
+  secondUserId Int
+  // primary true -> dia yang transfer 
+  primary Boolean @default(false)
+}
