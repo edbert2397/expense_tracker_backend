@@ -7,6 +7,7 @@ import ActivityRoute from "./routes/ActivityRoute.js"
 import AuthRoute from "./routes/AuthRoute.js"
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import expressSession from 'express-session';
+import { PrismaClient } from "@prisma/client";
 dotenv.config();
 
 const app = express();
